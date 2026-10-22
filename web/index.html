@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jane Cafe — Order at Your Service</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f8fa;
+    --surface: #ffffff;
+    --brand: #78350f;
+    --brand-light: #92400e;
+    --brand-pale: #fef3c7;
+    --accent: #111827;
+    --border: #e5e7eb;
+    --text: #111827;
+    --text-2: #6b7280;
+    --text-3: #9ca3af;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --shadow: 0 2px 8px rgba(0,0,0,0.06);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+    --font: 'Inter', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; }
+
+  .app { display: flex; height: 100vh; overflow: hidden; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 240px; background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0;
+  }
+  .brand-bar {
+    padding: 18px; display: flex; align-items: center; gap: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand-logo {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: linear-gradient(135deg, #78350f, #b45309);
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 18px; font-weight: 800;
+  }
+  .brand-name { font-size: 14px; font-weight: 700; letter-spacing: 0.3px; }
+  .brand-sub { font-size: 11px; color: var(--text-2); }
+
+  .nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+  .nav-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; color: var(--text-2);
+    cursor: pointer; transition: all 0.15s; margin-bottom: 2px;
+  }
+  .nav-item:hover { background: #f4f5f7; color: var(--text); }
+  .nav-item.active { background: var(--brand-pale); color: var(--brand); }
+  .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+  .nav-item .badge {
+    margin-left: auto; background: #ef4444; color: white;
+    font-size: 10px; font-weight: 700; padding: 2px 7px;
+    border-radius: 10px; min-width: 20px; text-align: center;
+  }
+  .nav-divider { height: 1px; background: var(--border); margin: 8px 10px; }
+
+  .user-card {
+    padding: 14px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .user-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, #78350f, #b45309);
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 13px;
+  }
+  .user-name { font-size: 13px; font-weight: 600; }
+  .user-tier { font-size: 11px; color: var(--brand); font-weight: 600; }
+
+  /* Main */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+
+  .topbar {
+    height: 64px; background: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; flex-shrink: 0;
+  }
+  .location {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; color: var(--text-2); cursor: pointer;
+  }
+  .location strong { color: var(--text); font-size: 14px; }
+  .location svg { color: var(--brand); }
+
+  .topbar-center {
+    flex: 1; max-width: 420px; margin: 0 24px;
+    position: relative;
+  }
+  .search {
+    width: 100%; padding: 9px 14px 9px 38px;
+    border: 1px solid var(--border); border-radius: 24px;
+    font-size: 13px; font-family: var(--font);
+    background: var(--bg);
+  }
+  .search:focus { outline: none; border-color: var(--brand); background: white; }
+  .search-icon {
+    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--text-3);
+  }
+
+  .topbar-right { display: flex; align-items: center; gap: 10px; }
+  .icon-btn {
+    width: 38px; height: 38px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--surface);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--text); transition: all 0.15s; position: relative;
+  }
+  .icon-btn:hover { background: var(--bg); }
+  .icon-btn svg { width: 18px; height: 18px; }
+
+  .cart-btn {
+    background: var(--brand); color: white; border: none;
+    padding: 0 16px; border-radius: 24px; height: 38px;
+    display: flex; align-items: center; gap: 8px;
+    font-weight: 600; font-size: 13px; cursor: pointer;
+    font-family: var(--font);
+  }
+  .cart-btn:hover { background: var(--brand-light); }
+  .cart-btn .count {
+    background: white; color: var(--brand);
+    padding: 2px 7px; border-radius: 10px; font-size: 11px; font-weight: 700;
+  }
+
+  /* Content */
+  .content { flex: 1; overflow-y: auto; padding: 24px 28px; }
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #78350f 0%, #b45309 100%);
+    border-radius: var(--radius); padding: 28px 32px;
+    color: white; margin-bottom: 24px; position: relative; overflow: hidden;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .hero::after {
+    content: ''; position: absolute; right: -20px; bottom: -30px;
+    font-size: 200px; opacity: 0.15;
+  }
+  .hero-tag {
+    display: inline-block; padding: 4px 10px; background: rgba(255,255,255,0.2);
+    border-radius: 12px; font-size: 11px; font-weight: 600; margin-bottom: 10px;
+    backdrop-filter: blur(10px);
+  }
+  .hero h1 { font-size: 26px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .hero p { font-size: 14px; opacity: 0.9; margin-bottom: 16px; }
+  .hero-btn {
+    background: white; color: var(--brand); border: none;
+    padding: 10px 20px; border-radius: 24px; font-weight: 700;
+    font-size: 13px; cursor: pointer; font-family: var(--font);
+  }
+
+  /* Section */
+  .section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 14px;
+  }
+  .section-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+  .section-link { font-size: 13px; color: var(--brand); font-weight: 600; cursor: pointer; }
+
+  /* Categories */
+  .categories {
+    display: flex; gap: 10px; overflow-x: auto; margin-bottom: 24px;
+    padding-bottom: 4px;
+  }
+  .categories::-webkit-scrollbar { display: none; }
+  .cat {
+    flex-shrink: 0; padding: 10px 18px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: 24px;
+    font-size: 13px; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .cat:hover { border-color: var(--brand); }
+  .cat.active { background: var(--brand); color: white; border-color: var(--brand); }
+
+  /* Menu Grid */
+  .menu-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px; margin-bottom: 28px;
+  }
+  .menu-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden; cursor: pointer;
+    transition: all 0.2s; position: relative;
+  }
+  .menu-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); border-color: transparent; }
+  .menu-img {
+    height: 140px; background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 56px; position: relative;
+  }
+  .menu-fav {
+    position: absolute; top: 10px; right: 10px;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: white; border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: var(--shadow); color: var(--text-3);
+  }
+  .menu-fav.liked { color: #ef4444; }
+  .menu-tag {
+    position: absolute; top: 10px; left: 10px;
+    padding: 3px 8px; background: #ef4444; color: white;
+    border-radius: 10px; font-size: 10px; font-weight: 700;
+  }
+  .menu-info { padding: 14px; }
+  .menu-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+  .menu-desc { font-size: 12px; color: var(--text-2); margin-bottom: 10px; line-height: 1.4; }
+  .menu-bottom { display: flex; justify-content: space-between; align-items: center; }
+  .menu-price { font-weight: 800; font-size: 15px; }
+  .add-btn {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--brand); color: white; border: none;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700; transition: transform 0.15s;
+  }
+  .add-btn:hover { transform: scale(1.1); background: var(--brand-light); }
+
+  /* Rewards Strip */
+  .rewards-strip {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border-radius: var(--radius); padding: 18px 22px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 24px; border: 1px solid #fcd34d;
+  }
+  .rewards-left { display: flex; align-items: center; gap: 14px; }
+  .stamps { display: flex; gap: 4px; }
+  .stamp {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px dashed #b45309; display: flex; align-items: center;
+    justify-content: center; font-size: 12px; background: white;
+  }
+  .stamp.filled { background: var(--brand); border-style: solid; color: white; }
+  .rewards-text { font-size: 13px; font-weight: 600; color: var(--brand); }
+  .rewards-sub { font-size: 11px; color: var(--brand-light); }
+  .rewards-pts { font-size: 22px; font-weight: 800; color: var(--brand); }
+
+  /* Orders */
+  .order-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px; margin-bottom: 14px;
+  }
+  .order-top { display: flex; justify-content: space-between; margin-bottom: 14px; }
+  .order-id { font-weight: 700; font-size: 15px; }
+  .order-date { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .order-status {
+    padding: 5px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;
+  }
+  .order-status.preparing { background: #fef3c7; color: #92400e; }
+  .order-status.ready { background: #dbeafe; color: #1e40af; }
+  .order-status.transit { background: #ffedd5; color: #9a3412; }
+  .order-status.delivered { background: #dcfce7; color: #166534; }
+
+  .progress-bar {
+    display: flex; justify-content: space-between; margin: 18px 0;
+    position: relative;
+  }
+  .progress-bar::before {
+    content: ''; position: absolute; top: 14px; left: 20px; right: 20px;
+    height: 2px; background: var(--border); z-index: 0;
+  }
+  .progress-bar .fill {
+    position: absolute; top: 14px; left: 20px; height: 2px;
+    background: var(--brand); z-index: 1; transition: width 0.5s;
+  }
+  .step {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 6px; z-index: 2; flex: 1;
+  }
+  .step-dot {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: var(--surface); border: 2px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+  }
+  .step.done .step-dot { background: var(--brand); border-color: var(--brand); color: white; }
+  .step.active .step-dot { border-color: var(--brand); color: var(--brand); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(120,53,15,0.4); } 50% { box-shadow: 0 0 0 8px rgba(120,53,15,0); } }
+  .step-label { font-size: 11px; color: var(--text-2); font-weight: 500; }
+  .step.done .step-label, .step.active .step-label { color: var(--brand); font-weight: 600; }
+
+  .order-items { display: flex; gap: 10px; padding: 14px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 14px 0; }
+  .order-thumb {
+    width: 50px; height: 50px; border-radius: var(--radius-sm);
+    background: var(--bg); display: flex; align-items: center;
+    justify-content: center; font-size: 24px; flex-shrink: 0;
+  }
+  .order-item-info { flex: 1; }
+  .order-item-name { font-size: 13px; font-weight: 600; }
+  .order-item-qty { font-size: 12px; color: var(--text-2); }
+  .order-item-price { font-weight: 700; font-size: 13px; }
+
+  .order-footer { display: flex; justify-content: space-between; align-items: center; }
+  .order-total { font-size: 13px; color: var(--text-2); }
+  .order-total strong { color: var(--text); font-size: 16px; margin-left: 6px; }
+  .order-actions { display: flex; gap: 8px; }
+  .btn-sm {
+    padding: 7px 14px; border-radius: 20px; font-size: 12px;
+    font-weight: 600; cursor: pointer; border: none; font-family: var(--font);
+  }
+  .btn-sm.primary { background: var(--brand); color: white; }
+  .btn-sm.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+
+  /* Cart View */
+  .cart-layout { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
+  .cart-items-card, .cart-summary-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .cart-item {
+    display: flex; gap: 14px; padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .cart-item:last-child { border-bottom: none; }
+  .cart-item-img {
+    width: 64px; height: 64px; border-radius: var(--radius-sm);
+    background: var(--bg); display: flex; align-items: center;
+    justify-content: center; font-size: 32px; flex-shrink: 0;
+  }
+  .cart-item-info { flex: 1; }
+  .cart-item-name { font-weight: 700; font-size: 14px; margin-bottom: 3px; }
+  .cart-item-desc { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
+  .qty-control {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--bg); border-radius: 20px; padding: 4px;
+  }
+  .qty-btn {
+    width: 24px; height: 24px; border-radius: 50%;
+    border: none; background: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 14px; color: var(--brand);
+  }
+  .qty-btn:hover { background: var(--brand-pale); }
+  .qty-num { font-weight: 700; font-size: 13px; min-width: 20px; text-align: center; }
+  .cart-item-price { font-weight: 700; font-size: 15px; }
+
+  .summary-row {
+    display: flex; justify-content: space-between;
+    padding: 10px 0; font-size: 13px;
+  }
+  .summary-row.total {
+    border-top: 1px solid var(--border); margin-top: 8px; padding-top: 14px;
+    font-size: 16px; font-weight: 700;
+  }
+  .summary-label { color: var(--text-2); }
+
+  .pay-option {
+    display: flex; align-items: center; gap: 10px; padding: 12px;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .pay-option:has(input:checked) {
+    border-color: var(--brand);
+    background: var(--brand-pale);
+  }
+  .pay-option input { accent-color: var(--brand); width: 16px; height: 16px; }
+
+  .checkout-btn {
+    width: 100%; padding: 14px; background: var(--brand); color: white;
+    border: none; border-radius: var(--radius-sm); font-weight: 700;
+    font-size: 14px; cursor: pointer; font-family: var(--font);
+    margin-top: 14px;
+  }
+  .checkout-btn:hover { background: var(--brand-light); }
+  .checkout-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+  .empty-state {
+    text-align: center; padding: 60px 20px; color: var(--text-2);
+  }
+  .empty-state .icon { font-size: 64px; margin-bottom: 12px; opacity: 0.5; }
+  .empty-state h3 { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+  .empty-state p { font-size: 13px; }
+
+  /* Notifications */
+  .notif-item {
+    display: flex; gap: 14px; padding: 16px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); margin-bottom: 10px;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .notif-item:hover { border-color: var(--brand); }
+  .notif-item.unread { border-left: 3px solid var(--brand); }
+  .notif-icon {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+  .notif-icon.promo { background: #fef3c7; }
+  .notif-icon.order { background: #dbeafe; }
+  .notif-icon.reward { background: #dcfce7; }
+  .notif-content { flex: 1; }
+  .notif-title { font-weight: 600; font-size: 14px; margin-bottom: 3px; }
+  .notif-desc { font-size: 13px; color: var(--text-2); line-height: 1.4; }
+  .notif-time { font-size: 11px; color: var(--text-3); margin-top: 4px; }
+
+  /* Account */
+  .profile-header {
+    background: linear-gradient(135deg, #78350f, #b45309);
+    border-radius: var(--radius); padding: 28px; color: white;
+    display: flex; align-items: center; gap: 20px; margin-bottom: 24px;
+    position: relative; overflow: hidden;
+  }
+  .profile-header::after {
+    content: ''; position: absolute; right: -40px; top: -40px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+  }
+  .profile-avatar {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: white; color: var(--brand);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; font-weight: 800; flex-shrink: 0;
+  }
+  .profile-name { font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+  .profile-email { font-size: 13px; opacity: 0.9; margin-bottom: 8px; }
+  .profile-tier {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 12px; background: rgba(255,255,255,0.2);
+    border-radius: 12px; font-size: 12px; font-weight: 700;
+    backdrop-filter: blur(10px);
+  }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .info-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px;
+  }
+  .info-card-title {
+    font-size: 14px; font-weight: 700; margin-bottom: 14px;
+    padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .info-card-title a { font-size: 12px; color: var(--brand); cursor: pointer; font-weight: 600; }
+  .info-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; }
+  .info-label { color: var(--text-2); }
+  .info-value { font-weight: 600; }
+
+  /* Settings */
+  .settings-layout { display: grid; grid-template-columns: 220px 1fr; gap: 24px; }
+  .settings-nav { display: flex; flex-direction: column; gap: 2px; }
+  .settings-nav-item {
+    padding: 10px 14px; border-radius: var(--radius-sm);
+    font-size: 13px; color: var(--text-2); cursor: pointer; font-weight: 500;
+  }
+  .settings-nav-item:hover { background: var(--bg); color: var(--text); }
+  .settings-nav-item.active { background: var(--brand-pale); color: var(--brand); font-weight: 600; }
+
+  .settings-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 24px;
+  }
+  .settings-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .settings-sub { font-size: 13px; color: var(--text-2); margin-bottom: 20px; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+  .form-label { font-size: 12px; font-weight: 600; color: var(--text-2); }
+  .form-input, .form-select {
+    padding: 10px 12px; border: 1px solid var(--border);
+    border-radius: var(--radius-sm); font-size: 13px;
+    font-family: var(--font); background: white;
+  }
+  .form-input:focus, .form-select:focus { outline: none; border-color: var(--brand); }
+
+  .toggle-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 0; border-bottom: 1px solid var(--border);
+  }
+  .toggle-row:last-child { border-bottom: none; }
+  .toggle-label { font-size: 13px; font-weight: 600; }
+  .toggle-desc { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .toggle {
+    width: 40px; height: 22px; background: var(--border);
+    border-radius: 11px; position: relative; cursor: pointer; transition: background 0.2s;
+  }
+  .toggle.on { background: var(--brand); }
+  .toggle::after {
+    content: ''; position: absolute; top: 2px; left: 2px;
+    width: 18px; height: 18px; background: white; border-radius: 50%;
+    transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { transform: translateX(18px); }
+
+  /* Add to Cart Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+    display: none; align-items: flex-end; justify-content: center;
+    z-index: 100; backdrop-filter: blur(4px);
+  }
+  .modal-overlay.show { display: flex; }
+  .modal-sheet {
+    background: var(--surface); border-radius: 20px 20px 0 0;
+    padding: 24px; width: 100%; max-width: 420px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .modal-handle {
+    width: 40px; height: 4px; background: var(--border);
+    border-radius: 2px; margin: 0 auto 16px;
+  }
+  .modal-product {
+    display: flex; gap: 14px; margin-bottom: 20px;
+    padding-bottom: 16px; border-bottom: 1px solid var(--border);
+  }
+  .modal-product-img {
+    width: 72px; height: 72px; border-radius: var(--radius-sm);
+    background: var(--bg); display: flex; align-items: center;
+    justify-content: center; font-size: 36px; flex-shrink: 0;
+  }
+  .modal-product-name { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .modal-product-desc { font-size: 12px; color: var(--text-2); margin-bottom: 8px; }
+  .modal-product-price { font-weight: 800; font-size: 16px; color: var(--brand); }
+
+  .modal-qty {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .modal-qty-label { font-size: 13px; font-weight: 600; }
+  .modal-qty-control {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg); padding: 6px; border-radius: 24px;
+  }
+  .modal-qty-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: none; background: white; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 16px; color: var(--brand);
+  }
+  .modal-qty-btn:hover { background: var(--brand-pale); }
+  .modal-qty-num { font-weight: 700; font-size: 15px; min-width: 24px; text-align: center; }
+
+  .modal-actions { display: flex; gap: 10px; }
+  .modal-btn {
+    flex: 1; padding: 12px; border-radius: var(--radius-sm);
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    font-family: var(--font); border: none;
+  }
+  .modal-btn.secondary { background: var(--bg); color: var(--text); }
+  .modal-btn.primary { background: var(--brand); color: white; }
+  .modal-btn:hover { opacity: 0.9; }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand-bar">
+      <div class="brand-logo">J</div>
+      <div>
+        <div class="brand-name">JANE CAFE</div>
+        <div class="brand-sub">Order at your service</div>
+      </div>
+    </div>
+
+    <nav class="nav">
+      <div class="nav-item active" data-view="menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Menu
+      </div>
+      <div class="nav-item" data-view="cart">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+        My Cart
+        <span class="badge" id="cart-badge" style="display:none;">0</span>
+      </div>
+      <div class="nav-item" data-view="orders">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11H5a2 2 0 00-2 2v7a2 2 0 002 2h4M9 11V5a2 2 0 012-2h6a2 2 0 012 2v6M9 11h6"/></svg>
+        My Orders
+      </div>
+      <div class="nav-item" data-view="rewards">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Rewards
+      </div>
+
+      <div class="nav-divider"></div>
+
+      <div class="nav-item" data-view="notifications">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+        Notifications
+      </div>
+      <div class="nav-item" data-view="account">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Profile
+      </div>
+      <div class="nav-item" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        Settings
+      </div>
+    </nav>
+
+    <div class="user-card">
+      <div class="user-avatar">JD</div>
+      <div>
+        <div class="user-name">Juan Dela Cruz</div>
+        <div class="user-tier">⭐ Gold Member</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <header class="topbar">
+      <div class="location">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <div>
+          <div style="font-size:11px;color:var(--text-3);">Deliver to</div>
+          <strong id="location-text">Select location</strong>
+        </div>
+      </div>
+
+      <div class="topbar-center">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search" placeholder="Search coffee, food, desserts...">
+      </div>
+
+      <div class="topbar-right">
+        <button class="icon-btn" aria-label="Favorites">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </button>
+        <button class="cart-btn" id="topbar-cart-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
+          Cart
+          <span class="count" id="cart-count">0</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- MENU VIEW -->
+      <section class="view active" id="view-menu">
+        <div class="hero">
+          <div>
+            <div class="hero-tag">🔥 LIMITED OFFER</div>
+            <h1>Buy 1 Take 1<br>Every Morning</h1>
+            <p>Order any grande coffee before 10AM and get one free.</p>
+            <button class="hero-btn">Order Now →</button>
+          </div>
+        </div>
+
+        <div class="rewards-strip">
+          <div class="rewards-left">
+            <div class="stamps">
+              <div class="stamp filled">✓</div>
+              <div class="stamp filled">✓</div>
+              <div class="stamp filled">✓</div>
+              <div class="stamp filled">✓</div>
+              <div class="stamp filled">✓</div>
+              <div class="stamp filled">✓</div>
+              <div class="stamp filled">✓</div>
+              <div class="stamp">7</div>
+              <div class="stamp">8</div>
+              <div class="stamp"></div>
+            </div>
+            <div>
+              <div class="rewards-text">7/10 stamps</div>
+              <div class="rewards-sub">3 more for a free coffee!</div>
+            </div>
+          </div>
+          <div class="rewards-pts">420 pts</div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">Categories</div>
+        </div>
+        <div class="categories">
+          <div class="cat active">☕ All</div>
+          <div class="cat">☕ Coffee</div>
+          <div class="cat">🍵 Tea</div>
+          <div class="cat">🥐 Pastries</div>
+          <div class="cat">🥪 Food</div>
+          <div class="cat"> Desserts</div>
+          <div class="cat">🧊 Cold Brew</div>
+          <div class="cat">🎁 Merch</div>
+        </div>
+
+        <div class="section-header">
+          <div class="section-title">Popular Now</div>
+          <div class="section-link">See all →</div>
+        </div>
+        <div class="menu-grid" id="menu-grid">
+          <!-- Menu items rendered by JS -->
+        </div>
+      </section>
+
+      <!-- CART VIEW -->
+      <section class="view" id="view-cart">
+        <div class="section-header">
+          <div class="section-title">My Cart</div>
+          <button class="btn-sm secondary" id="clear-cart-btn" style="display:none;">Clear Cart</button>
+        </div>
+
+        <div id="cart-content">
+          <!-- Rendered by JS -->
+        </div>
+      </section>
+
+      <!-- ORDERS VIEW -->
+      <section class="view" id="view-orders">
+        <div class="section-header">
+          <div class="section-title">My Orders</div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn-sm secondary">Active</button>
+            <button class="btn-sm secondary">Past</button>
+          </div>
+        </div>
+
+        <div id="orders-content">
+          <div class="empty-state">
+            <div class="icon">📦</div>
+            <h3>No orders yet</h3>
+            <p>Your order history will appear here once you place your first order.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- REWARDS VIEW -->
+      <section class="view" id="view-rewards">
+        <div class="hero" style="background:linear-gradient(135deg,#f59e0b,#d97706);">
+          <div>
+            <div class="hero-tag">⭐ GOLD MEMBER</div>
+            <h1>You're 3 stamps<br>away from free coffee!</h1>
+            <p>Keep ordering to unlock your next reward.</p>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-title">Your Stats</div>
+            <div class="info-row"><span class="info-label">Total Orders</span><span class="info-value">—</span></div>
+            <div class="info-row"><span class="info-label">Total Spent</span><span class="info-value">₱0.00</span></div>
+            <div class="info-row"><span class="info-label">Rewards Points</span><span class="info-value" style="color:var(--brand);">420 pts</span></div>
+            <div class="info-row"><span class="info-label">Stamps</span><span class="info-value">7/10</span></div>
+            <div class="info-row"><span class="info-label">Member Since</span><span class="info-value">—</span></div>
+          </div>
+          <div class="info-card">
+            <div class="info-card-title">Available Rewards</div>
+            <div style="padding:12px;background:var(--bg);border-radius:var(--radius-sm);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+              <div>
+                <div style="font-weight:600;font-size:13px;">🎁 Free Coffee</div>
+                <div style="font-size:11px;color:var(--text-2);">10 stamps</div>
+              </div>
+              <button class="btn-sm secondary" disabled>Locked</button>
+            </div>
+            <div style="padding:12px;background:var(--brand-pale);border-radius:var(--radius-sm);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;border:1px solid #fcd34d;">
+              <div>
+                <div style="font-weight:600;font-size:13px;">☕ 20% Off Any Drink</div>
+                <div style="font-size:11px;color:var(--brand);">200 pts</div>
+              </div>
+              <button class="btn-sm primary">Redeem</button>
+            </div>
+            <div style="padding:12px;background:var(--brand-pale);border-radius:var(--radius-sm);display:flex;justify-content:space-between;align-items:center;border:1px solid #fcd34d;">
+              <div>
+                <div style="font-weight:600;font-size:13px;">🥐 Free Pastry</div>
+                <div style="font-size:11px;color:var(--brand);">350 pts</div>
+              </div>
+              <button class="btn-sm primary">Redeem</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- NOTIFICATIONS VIEW -->
+      <section class="view" id="view-notifications">
+        <div class="section-header">
+          <div class="section-title">Notifications</div>
+          <button class="btn-sm secondary">Mark all read</button>
+        </div>
+
+        <div class="empty-state">
+          <div class="icon">🔔</div>
+          <h3>No notifications yet</h3>
+          <p>You'll receive order updates, promos, and rewards here.</p>
+        </div>
+      </section>
+
+      <!-- ACCOUNT VIEW -->
+      <section class="view" id="view-account">
+        <div class="profile-header">
+          <div class="profile-avatar">JD</div>
+          <div>
+            <div class="profile-name">Juan Dela Cruz</div>
+            <div class="profile-email">juan.delacruz@email.com</div>
+            <div class="profile-tier">⭐ Gold Member · 420 pts</div>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-title">Basic Information</div>
+            <div class="info-row"><span class="info-label">Full Name</span><span class="info-value">Juan Dela Cruz</span></div>
+            <div class="info-row"><span class="info-label">Email</span><span class="info-value">juan.delacruz@email.com</span></div>
+            <div class="info-row"><span class="info-label">Phone</span><span class="info-value">+63 917 ••• ••••</span></div>
+            <div class="info-row"><span class="info-label">Birthday</span><span class="info-value">—</span></div>
+            <div class="info-row"><span class="info-label">Member Since</span><span class="info-value">—</span></div>
+          </div>
+
+          <div class="info-card">
+            <div class="info-card-title">Saved Addresses <a>+ Add</a></div>
+            <div class="empty-state" style="padding:30px 10px;">
+              <div class="icon" style="font-size:40px;">📍</div>
+              <h3 style="font-size:14px;">No saved addresses</h3>
+              <p style="font-size:12px;">Add your home or office address for faster checkout.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SETTINGS VIEW -->
+      <section class="view" id="view-settings">
+        <div class="section-header">
+          <div class="section-title">Settings</div>
+          <button class="btn-sm primary">Save Changes</button>
+        </div>
+
+        <div class="settings-layout">
+          <div class="settings-nav">
+            <div class="settings-nav-item active">General</div>
+            <div class="settings-nav-item">Notifications</div>
+            <div class="settings-nav-item">Privacy</div>
+            <div class="settings-nav-item">Payment</div>
+            <div class="settings-nav-item">Addresses</div>
+            <div class="settings-nav-item">About</div>
+          </div>
+
+          <div class="settings-card">
+            <div class="settings-title">General Settings</div>
+            <div class="settings-sub">Manage your app preferences and defaults.</div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Default Branch</label>
+                <select class="form-select"><option>Jane Cafe — Main Branch</option><option>Jane Cafe — Branch 2</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Default Order Type</label>
+                <select class="form-select"><option>Walk-in / Pickup</option><option>Delivery</option></select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Default Milk</label>
+                <select class="form-select"><option>Regular Milk</option><option>Oat Milk</option><option>Almond Milk</option></select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Default Sugar Level</label>
+                <select class="form-select"><option>Regular</option><option>Less Sugar</option><option>No Sugar</option></select>
+              </div>
+            </div>
+
+            <div style="margin-top:16px;">
+              <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Notifications</div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Order updates</div><div class="toggle-desc">Get notified when your order status changes</div></div>
+                <div class="toggle on"></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Promos & offers</div><div class="toggle-desc">Receive deals and limited-time offers</div></div>
+                <div class="toggle on"></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Rewards reminders</div><div class="toggle-desc">Remind me when I'm close to a reward</div></div>
+                <div class="toggle on"></div>
+              </div>
+              <div class="toggle-row">
+                <div><div class="toggle-label">Email newsletter</div><div class="toggle-desc">Weekly coffee tips and news</div></div>
+                <div class="toggle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- Add to Cart Modal -->
+<div class="modal-overlay" id="add-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-product">
+      <div class="modal-product-img" id="modal-img"></div>
+      <div style="flex:1;">
+        <div class="modal-product-name" id="modal-name">—</div>
+        <div class="modal-product-desc" id="modal-desc">—</div>
+        <div class="modal-product-price" id="modal-price">₱0.00</div>
+      </div>
+    </div>
+    <div class="modal-qty">
+      <div class="modal-qty-label">Quantity</div>
+      <div class="modal-qty-control">
+        <button class="modal-qty-btn" id="qty-dec">−</button>
+        <div class="modal-qty-num" id="modal-qty">1</div>
+        <button class="modal-qty-btn" id="qty-inc">+</button>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn secondary" id="btn-add-cart">Add to Cart</button>
+      <button class="modal-btn primary" id="btn-checkout">Proceed to Order</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Menu data (sample for UI demo only - replace with backend data)
+  const menuItems = [
+    { id: 1, name: 'Arabican Bliss Latte', desc: 'Smooth arabica with oat milk & caramel', price: 180, emoji: '☕', tag: 'BESTSELLER' },
+    { id: 2, name: 'Java Sunrise Mocha', desc: 'Rich mocha with whipped cream', price: 200, emoji: '☀️' },
+    { id: 3, name: 'Sumatra Cold Brew', desc: '12-hour steeped, bold & smooth', price: 150, emoji: '🧊' },
+    { id: 4, name: 'Butter Croissant', desc: 'Flaky, golden, baked fresh daily', price: 95, emoji: '🥐' },
+    { id: 5, name: 'Strawberry Frappe', desc: 'Blended strawberry with cream', price: 190, emoji: '🍓', tag: 'NEW' },
+    { id: 6, name: 'Matcha Latte', desc: 'Ceremonial grade matcha', price: 170, emoji: '🍵' },
+    { id: 7, name: 'Breakfast Sandwich', desc: 'Egg, cheese, bacon on brioche', price: 210, emoji: '🥪' },
+    { id: 8, name: 'Blueberry Muffin', desc: 'Loaded with fresh blueberries', price: 120, emoji: '🧁' },
+  ];
+
+  const cart = [];
+  let modalItem = null;
+  let modalQty = 1;
+
+  // Render menu
+  function renderMenu() {
+    const grid = document.getElementById('menu-grid');
+    grid.innerHTML = menuItems.map(item => `
+      <div class="menu-item" data-id="${item.id}">
+        <div class="menu-img" style="background:linear-gradient(135deg,#f3f4f6,#e5e7eb);">
+          ${item.emoji}
+          ${item.tag ? `<span class="menu-tag">${item.tag}</span>` : ''}
+          <button class="menu-fav" data-id="${item.id}">♡</button>
+        </div>
+        <div class="menu-info">
+          <div class="menu-name">${item.name}</div>
+          <div class="menu-desc">${item.desc}</div>
+          <div class="menu-bottom">
+            <div class="menu-price">₱${item.price.toFixed(2)}</div>
+            <button class="add-btn" data-id="${item.id}">+</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    // Add to cart buttons
+    grid.querySelectorAll('.add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = parseInt(btn.dataset.id);
+        openModal(id);
+      });
+    });
+
+    // Favorites
+    grid.querySelectorAll('.menu-fav').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        btn.classList.toggle('liked');
+        btn.textContent = btn.classList.contains('liked') ? '♥' : '♡';
+      });
+    });
+  }
+
+  // Modal
+  function openModal(id) {
+    modalItem = menuItems.find(i => i.id === id);
+    modalQty = 1;
+    document.getElementById('modal-img').textContent = modalItem.emoji;
+    document.getElementById('modal-name').textContent = modalItem.name;
+    document.getElementById('modal-desc').textContent = modalItem.desc;
+    document.getElementById('modal-price').textContent = `₱${modalItem.price.toFixed(2)}`;
+    document.getElementById('modal-qty').textContent = modalQty;
+    document.getElementById('add-modal').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('add-modal').classList.remove('show');
+  }
+
+  document.getElementById('qty-inc').addEventListener('click', () => {
+    modalQty++;
+    document.getElementById('modal-qty').textContent = modalQty;
+  });
+  document.getElementById('qty-dec').addEventListener('click', () => {
+    if (modalQty > 1) {
+      modalQty--;
+      document.getElementById('modal-qty').textContent = modalQty;
+    }
+  });
+
+  document.getElementById('btn-add-cart').addEventListener('click', () => {
+    addToCart(modalItem, modalQty);
+    closeModal();
+  });
+
+  document.getElementById('btn-checkout').addEventListener('click', () => {
+    addToCart(modalItem, modalQty);
+    closeModal();
+    switchView('cart');
+  });
+
+  document.getElementById('add-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'add-modal') closeModal();
+  });
+
+  // Cart logic
+  function addToCart(item, qty) {
+    const existing = cart.find(c => c.id === item.id);
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      cart.push({ ...item, qty });
+    }
+    updateCartUI();
+  }
+
+  function updateCartUI() {
+    const totalItems = cart.reduce((sum, c) => sum + c.qty, 0);
+    document.getElementById('cart-count').textContent = totalItems;
+    const badge = document.getElementById('cart-badge');
+    if (totalItems > 0) {
+      badge.style.display = 'inline';
+      badge.textContent = totalItems;
+    } else {
+      badge.style.display = 'none';
+    }
+    renderCart();
+  }
+
+  function renderCart() {
+    const content = document.getElementById('cart-content');
+    const clearBtn = document.getElementById('clear-cart-btn');
+
+    if (cart.length === 0) {
+      clearBtn.style.display = 'none';
+      content.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">🛒</div>
+          <h3>Your cart is empty</h3>
+          <p>Add items from the menu to get started.</p>
+        </div>
+      `;
+      return;
+    }
+
+    clearBtn.style.display = 'inline-flex';
+    const subtotal = cart.reduce((sum, c) => sum + c.price * c.qty, 0);
+    const total = subtotal;
+
+    content.innerHTML = `
+      <div class="cart-layout">
+        <div class="cart-items-card">
+          <div style="font-weight:700;font-size:15px;margin-bottom:12px;">Items (${cart.length})</div>
+          ${cart.map(item => `
+            <div class="cart-item">
+              <div class="cart-item-img">${item.emoji}</div>
+              <div class="cart-item-info">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-desc">${item.desc}</div>
+                <div class="qty-control">
+                  <button class="qty-btn" data-id="${item.id}" data-action="dec">−</button>
+                  <span class="qty-num">${item.qty}</span>
+                  <button class="qty-btn" data-id="${item.id}" data-action="inc">+</button>
+                </div>
+              </div>
+              <div class="cart-item-price">₱${(item.price * item.qty).toFixed(2)}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div class="cart-summary-card">
+          <div style="font-weight:700;font-size:15px;margin-bottom:14px;">Order Summary</div>
+
+          <div class="summary-row">
+            <span class="summary-label">Subtotal</span>
+            <span>₱${subtotal.toFixed(2)}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total</span>
+            <span>₱${total.toFixed(2)}</span>
+          </div>
+
+          <div style="margin-top: 20px; margin-bottom: 14px;">
+            <div style="font-size:12px;font-weight:600;color:var(--text-2);margin-bottom:10px;">Payment Method</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <label class="pay-option">
+                <input type="radio" name="payment" value="GCash" checked>
+                <span style="font-size:18px;">📱</span>
+                <div style="flex:1;">
+                  <div style="font-weight:600;font-size:13px;">GCash</div>
+                  <div style="font-size:11px;color:var(--text-2);">Pay via e-wallet</div>
+                </div>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="payment" value="Bank Transfer">
+                <span style="font-size:18px;">🏦</span>
+                <div style="flex:1;">
+                  <div style="font-weight:600;font-size:13px;">Bank Transfer</div>
+                  <div style="font-size:11px;color:var(--text-2);">BDO, BPI, etc.</div>
+                </div>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="payment" value="Cash">
+                <span style="font-size:18px;">💵</span>
+                <div style="flex:1;">
+                  <div style="font-weight:600;font-size:13px;">Cash</div>
+                  <div style="font-size:11px;color:var(--text-2);">Pay upon pickup</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button class="checkout-btn" id="place-order-btn">Place Order · ₱${total.toFixed(2)}</button>
+        </div>
+      </div>
+    `;
+
+    // Qty buttons
+    content.querySelectorAll('.qty-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = parseInt(btn.dataset.id);
+        const item = cart.find(c => c.id === id);
+        if (btn.dataset.action === 'inc') item.qty++;
+        else if (item.qty > 1) item.qty--;
+        else cart.splice(cart.indexOf(item), 1);
+        updateCartUI();
+      });
+    });
+
+    // Place order
+    document.getElementById('place-order-btn').addEventListener('click', () => {
+      const selectedPayment = document.querySelector('input[name="payment"]:checked').value;
+      alert(`Order placed!\n\nTotal: ₱${total.toFixed(2)}\nPayment Method: ${selectedPayment}\n\n(This will connect to your backend)`);
+      cart.length = 0;
+      updateCartUI();
+      switchView('orders');
+    });
+  }
+
+  document.getElementById('clear-cart-btn').addEventListener('click', () => {
+    if (confirm('Clear all items from cart?')) {
+      cart.length = 0;
+      updateCartUI();
+    }
+  });
+
+  // Topbar cart button
+  document.getElementById('topbar-cart-btn').addEventListener('click', () => switchView('cart'));
+
+  // Navigation
+  function switchView(viewName) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const navItem = document.querySelector(`.nav-item[data-view="${viewName}"]`);
+    if (navItem) navItem.classList.add('active');
+
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('view-' + viewName).classList.add('active');
+
+    if (viewName === 'cart') renderCart();
+  }
+
+  document.querySelectorAll('.nav-item[data-view]').forEach(item => {
+    item.addEventListener('click', () => switchView(item.dataset.view));
+  });
+
+  // Categories
+  document.querySelectorAll('.cat').forEach(c => c.addEventListener('click', () => {
+    document.querySelectorAll('.cat').forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+  }));
+
+  // Settings nav
+  document.querySelectorAll('.settings-nav-item').forEach(i => i.addEventListener('click', () => {
+    document.querySelectorAll('.settings-nav-item').forEach(x => x.classList.remove('active'));
+    i.classList.add('active');
+  }));
+
+  // Toggles
+  document.querySelectorAll('.toggle').forEach(t => t.addEventListener('click', () => t.classList.toggle('on')));
+
+  // Init
+  renderMenu();
+  updateCartUI();
+</script>
+
+</body>
+</html>
