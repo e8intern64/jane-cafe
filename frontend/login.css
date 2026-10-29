@@ -1,0 +1,126 @@
+/* Reset everything */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Page background: warm cream (was pink #feeceb) */
+body {
+    background-color: #faf5ec;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 440px;
+    padding: 20px;
+}
+
+/* No white card / no shadow — form sits on the cream, like the reference */
+.login-box {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Title: espresso brown (was near-black #111827) */
+.title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #3d2419;
+    margin-bottom: 28px;
+}
+
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 13px 16px;
+    background: #ffffff;
+    border: 1px solid #e9e1d6;     /* warm light border (was cool #d1d5db) */
+    border-radius: 10px;
+    font-size: 14px;
+    color: #3d2419;
+    outline: none;
+    transition: border 0.2s;
+}
+
+/* Muted warm placeholder text */
+.input-group input::placeholder {
+    color: #a89c8d;
+}
+
+/* Focus ring in brand brown (was blue #2563eb, which clashed) */
+.input-group input:focus {
+    border-color: #3d2419;
+}
+
+/* Login button: dark espresso (was coral #f2705f) */
+.btn-primary {
+    width: 100%;
+    padding: 13px;
+    background-color: #3d2419;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #2a1810;     /* deeper brown on hover (was navy #0f172a) */
+}
+
+/* Forgot link: warm tan/brown (was cool gray #6b7280) */
+.forgot-pass {
+    display: block;
+    text-align: center;
+    margin-top: 16px;
+    color: #8c6a4d;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.forgot-pass:hover {
+    text-decoration: underline;
+}
+
+/* Divider: warm tones + UPPERCASE like the reference ("OR LOG IN WITH") */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 26px 0;
+    color: #a3968a;
+    font-size: 12px;
+}
+
+.divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid #e7ddd0;   /* warm line (was cool #e5e7eb) */
+}
+
+.divider span {
+    padding: 0 12px;
+    text-transform: uppercase;           /* matches the screenshot's caps */
+    letter-spacing: 1px;
+}
+
+#g_id_signin {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}

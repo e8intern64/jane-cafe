@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jane Cafe - Log In</title>
+    <!-- This links the CSS. Make sure style.css is in the same folder! -->
+    <link rel="stylesheet" href="login.css">
+       <!-- Google Script -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+   
+</head>
+<body>
+
+
+    <div class="login-container">
+        <div class="login-box">
+            
+            <h2 class="title">Log In</h2>
+
+
+            <form id="loginForm">
+                <div class="input-group">
+                    <input type="email" placeholder="Email" required>
+                </div>
+                
+                <div class="input-group">
+                    <input type="password" placeholder="Password" required>
+                </div>
+
+
+                <button type="submit" class="btn-primary">Login</button>
+            </form>
+
+
+            <a href="#" class="forgot-pass">Forgot Password?</a>
+
+
+            <div class="divider">
+                <span>or Log In with</span>
+            </div>
+
+
+               <!-- This tells Google which app is asking for login -->
+  <div id="g_id_onload"
+     data-client_id="224295056187-bs4ni8shat08489cviucrtq9qb85dr1h.apps.googleusercontent.com"
+     data-context="signin"
+     data-ux_mode="popup"
+     data-auto_prompt="false"
+     data-callback="handleCredentialResponse">
+</div>
+
+   <!-- This draws the actual button -->
+   <div class="g_id_signin"
+        data-type="standard"
+        data-shape="rectangular"
+        data-theme="outline"
+        data-text="signin_with"
+        data-size="large"
+        data-logo_alignment="left">
+   </div>
+
+
+        </div>
+    </div>
+
+<!-- BEFORE (broken) -->
+<script src="script.js"></script>
+
+<!-- AFTER (correct) -->
+<script src="js/script.js"></script>
+
+
+</body>
+</html>
